@@ -1,0 +1,14 @@
+#game-board {
+    position: relative;
+    width: 700px;
+    height: 700px;
+    /* Añade la imagen de tu tablero aquí */
+    background-image: url('../imagenes/tablero.png');
+    background-size: cover;
+}
+.player {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+}

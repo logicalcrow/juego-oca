@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego de la Politica Fiscal</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/sweetalert2.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5 text-center">
+        <div class="row align-items-center justify-content-center">
+            <div class="col-md-2">
+                <div class="d-grid gap-2">
+                    <div class="form-group">
+                        <label for="numPlayers">Número de jugadores:</label>
+                        <input type="number" class="form-control" id="numPlayers" min="2" max="4" value="2">
+                    </div>
+                    <div class="group-btn">
+                        <button id="start-button" class="btn btn-primary">Inicio</button>
+                    <button id="reset-button" class="btn btn-warning">Reset</button>
+                    </div>
+                </div>
+                <br>
+                <div class="d-grid gap-2">
+                    <div id="cubilete-button">
+                        <img src="imagenes/dado_0.png" id="imagen-dado" class="img-fluid">
+                    </div>
+                    <div id="dado-button">
+                        
+                    </div>
+                    <div id="status" class="h4"></div>
+                </div>
+            </div>
+            <div class="col-md-2">
+            </div>
+            <div class="col-md-8">
+                <div id="game-board">
+                    <div id="players"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/sweetalert2.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>
