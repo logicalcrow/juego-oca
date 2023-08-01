@@ -78,8 +78,6 @@ $(document).ready(function () {
             $('#players').append(player.element);
             players.push(player);
         }
-
-        //$('#imagen-dado').prop('disabled', false);
         $('#imagen-dado').show();
         $('#start-button').prop('disabled', true);
         $('#numPlayers').prop('disabled', true);
@@ -87,11 +85,119 @@ $(document).ready(function () {
 
     function movePlayer(player, newPosition) {
         let promise = $.Deferred().resolve().promise();
+
+        
         for (let pos = player.position + 1; pos <= newPosition; pos++) {
             const move = function() {
-
                 const offset = players.indexOf(player) * 4;
+                try {
+                    return player.element.animate({
+                        left: coordinates[pos].x + offset + 'px',
+                        top: coordinates[pos].y  + offset + 'px'
+                    }, 500).promise();
+                } catch(err) {}
+            }
+            promise = promise.then(move);
+        }
+        
+        promise.then(() => {
+            console.log()
+            player.position = newPosition;
+            if (newPosition >= coordinates.length - 1) {
+                $('#status').text(`¡Felicidades! El grupo ${currentPlayerIndex + 1} ha ganado el juego.`);
 
+                Swal.fire({
+                    title: `¡Felicidades! El grupo ${currentPlayerIndex + 1} ha ganado el juego.`,
+                    width: 600,
+                    padding: '3em',
+                    color: '#C96AE3',
+                    background: '#fff url(imagenes/trees.png)',
+                    confirmButtonColor: '#C96AE3',
+                    backdrop: `
+                        rgba(201,106,227,0.4)
+                        url("imagenes/my-cat.gif")
+                        left top
+                        no-repeat
+                    `
+                })
+            } else {
+                reglas(player, newPosition)
+                currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+
+            }
+        });
+    }
+
+    function reglas(player, newPosition) {
+        if ([9, 18].includes(newPosition)) {
+            setTimeout(function() {
+                Swal.fire({
+                    title: 'Aumento de impuestos genera más ingresos',
+                    text: "El gobierno ha implementado un incremento de impuestos en los últimos meses, lo cual ha generado un mayor ingreso que puede ser utilizado para financiar diversas iniciativas y proyectos públicos. Avanza 2 espacios",
+                    icon: 'success',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Avanzar'
+                }).then((result) => {
+                    $('#status').append(` <span class="text-success">Avanza 2 casillas.</span>`);
+                    newPosition += 2;
+                    movePlayerAdd(player, newPosition);
+                })
+            }, 500)
+        }
+
+        if ([5, 13].includes(newPosition)) {
+            setTimeout(function() {
+                Swal.fire({
+                    title: 'Obras públicas impulsan progreso y bienestar',
+                    text: "El gobierno trabaja en obras públicas en construcción, impulsando el progreso y bienestar. Avanza 2 espacios",
+                    icon: 'success',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Avanzar'
+                }).then((result) => {
+                    $('#status').append(` <span class="text-success">Avanza 2 casillas.</span>`);
+                    newPosition += 2;
+                    movePlayerAdd(player, newPosition);
+                })
+            }, 500)
+        }
+
+
+        if ([16, 24].includes(newPosition)) {
+            setTimeout(function() {
+                Swal.fire({
+                    title: 'Reducción de impuestos disminuye ingresos gubernamentales',
+                    text: "El gobierno ha implementado una reducción de impuestos en los últimos meses, lo cual ha resultando en una disminución de ingresos para financiar programas y servicios públicos. Retrocede 2 espacios",
+                    icon: 'error',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Retroceder'
+                }).then((result) => {
+                    $('#status').append(` <span class="text-warning">Retrocede 2 casillas.</span>`);
+                    newPosition -= 2;
+                    movePlayerResta(player, newPosition);
+                })
+            }, 500)
+        }
+
+        if ([2, 4, 6, 8, 10, 12, 15, 19, 21, 23].includes(newPosition)) {
+            setTimeout(function() {
+                Swal.fire(
+                    'Gobierno reliza una pregunta al pueblo',
+                    '',
+                    'question'
+                )
+            }, 500)
+        }
+    }
+
+    function movePlayerAdd(player, newPosition) {
+        let promise = $.Deferred().resolve().promise();
+
+        for (let pos = player.position + 1; pos <= newPosition; pos++) {
+            const move = function() {
+                const offset = players.indexOf(player) * 4;
                 return player.element.animate({
                     left: coordinates[pos].x + offset + 'px',
                     top: coordinates[pos].y  + offset + 'px'
@@ -103,9 +209,34 @@ $(document).ready(function () {
         promise.then(() => {
             player.position = newPosition;
             if (newPosition >= coordinates.length - 1) {
-                $('#status').text(`¡Felicidades! El jugador ${currentPlayerIndex + 1} ha ganado el juego.`);
+                $('#status').text(`¡Felicidades! El grupo ${currentPlayerIndex + 1} ha ganado el juego.`);
             } else {
-                currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+                reglas(player, newPosition)
+            }
+        });
+    }
+
+    function movePlayerResta(player, newPosition) {
+        let promise = $.Deferred().resolve().promise();
+
+        for (let pos = player.position; pos >= newPosition; pos--) {
+    
+            const move = function() {
+                const offset = players.indexOf(player) * 4;
+                return player.element.animate({
+                    left: coordinates[pos].x + offset + 'px',
+                    top: coordinates[pos].y  + offset + 'px'
+                }, 500).promise();
+            }
+            promise = promise.then(move);
+        }
+
+        promise.then(() => {
+            player.position = newPosition;
+            if (newPosition >= coordinates.length - 1) {
+                $('#status').text(`¡Felicidades! El grupo ${currentPlayerIndex + 1} ha ganado el juego.`);
+            } else {
+                reglas(player, newPosition)
             }
         });
     }
@@ -114,11 +245,10 @@ $(document).ready(function () {
         const player = players[currentPlayerIndex];
         const dice = rollDice();
 
-
         // Configura una animación que muestre una secuencia de números antes de mostrar el resultado final
         let currentRoll = 1;
         let interval = setInterval(function() {
-            console.log(currentRoll)
+            //console.log(currentRoll)
             document.getElementById('imagen-dado').src = `imagenes/dado_${currentRoll}.png`;
             currentRoll++;
             if (currentRoll > 6) currentRoll = 1;
@@ -128,43 +258,16 @@ $(document).ready(function () {
         setTimeout(function() {
             clearInterval(interval);
             document.getElementById('imagen-dado').src = `imagenes/dado_${dice}.png`;
-            //console.log(`Resultado del dado: ${finalRoll}`);
             // Más lógica para manejar el resultado del dado, mover jugadores, etc.
 
             // Re-enable el clic en el dado
             document.getElementById('imagen-dado').style.pointerEvents = 'auto';
 
 
-            $('#status').text(`El jugador ${currentPlayerIndex + 1} ha lanzado un ${dice}.`);
-
+            $('#status').text(`El grupo ${currentPlayerIndex + 1} ha lanzado un ${dice}.`);
             let newPosition = player.position + dice;
-
-            if ([5, 9, 13, 18].includes(newPosition)) {
-                $('#status').append(` <span class="text-success">Avanza 2 casillas.</span>`);
-                newPosition += 2;
-            }
-
-            if ([16, 24].includes(newPosition)) {
-                $('#status').append(` <span class="text-warning">Retrocede 2 casillas.</span>`);
-                newPosition -= 2;
-            }
-
-            if ([2, 4, 6, 8, 10, 12, 15, 19, 21, 23].includes(newPosition)) {
-                const questionNumber = Math.floor(Math.random() * 19) + 1;
-                //$('#status').append(` Responde a la pregunta número ${questionNumber}.`);
-
-                Swal.fire(
-                  questions[questionNumber],
-                  'Pregunta nro. '+questionNumber,
-                  'question'
-                )
-            }
-
             movePlayer(player, newPosition);
-            }, 1000); // Duración total de la animación
-
-
-        
+        }, 1000); // Duración total de la animación
        
     }
     
@@ -187,6 +290,7 @@ $(document).ready(function () {
         const numPlayers = parseInt($('#numPlayers').val());
         setupPlayers(numPlayers);
     });
+
     $('#imagen-dado').click(playTurn);
     $('#reset-button').click(resetGame);
 
