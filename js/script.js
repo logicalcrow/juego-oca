@@ -42,9 +42,8 @@ $(document).ready(function () {
     };
 
     const playerColors = [
-        'red', 'blue', 'green', 'yellow',
-        'purple', 'orange', 'pink', 'brown',
-        'cyan', 'lime', 'magenta', 'gold',
+        'red', 'gold', 'green', 'yellow', 'purple', 'cyan',
+        'pink',  'lime', 'magenta', 'blue', 'orange', 'brown', 
         'silver', 'maroon', 'navy', 'olive'
     ];
 
@@ -86,14 +85,19 @@ $(document).ready(function () {
     function movePlayer(player, newPosition) {
         let promise = $.Deferred().resolve().promise();
 
-        
+        const radius = 10;
+
         for (let pos = player.position + 1; pos <= newPosition; pos++) {
             const move = function() {
-                const offset = players.indexOf(player) * 4;
+                const index = players.indexOf(player);
+                const angle = (index * 360 / players.length) * (Math.PI / 180);
+                const offsetX = radius * Math.cos(angle);
+                const offsetY = radius * Math.sin(angle);
+
                 try {
                     return player.element.animate({
-                        left: coordinates[pos].x + offset + 'px',
-                        top: coordinates[pos].y  + offset + 'px'
+                        left: coordinates[pos].x + offsetX + 'px',
+                        top: coordinates[pos].y  + offsetY + 'px'
                     }, 500).promise();
                 } catch(err) {}
             }
@@ -194,13 +198,16 @@ $(document).ready(function () {
 
     function movePlayerAdd(player, newPosition) {
         let promise = $.Deferred().resolve().promise();
-
+        const radius = 10;
         for (let pos = player.position + 1; pos <= newPosition; pos++) {
             const move = function() {
-                const offset = players.indexOf(player) * 4;
+                const index = players.indexOf(player);
+                const angle = (index * 360 / players.length) * (Math.PI / 180);
+                const offsetX = radius * Math.cos(angle);
+                const offsetY = radius * Math.sin(angle);
                 return player.element.animate({
-                    left: coordinates[pos].x + offset + 'px',
-                    top: coordinates[pos].y  + offset + 'px'
+                    left: coordinates[pos].x + offsetX + 'px',
+                    top: coordinates[pos].y  + offsetY + 'px'
                 }, 500).promise();
             }
             promise = promise.then(move);
@@ -218,14 +225,16 @@ $(document).ready(function () {
 
     function movePlayerResta(player, newPosition) {
         let promise = $.Deferred().resolve().promise();
-
+        const radius = 10;
         for (let pos = player.position; pos >= newPosition; pos--) {
-    
             const move = function() {
-                const offset = players.indexOf(player) * 4;
+                const index = players.indexOf(player);
+                const angle = (index * 360 / players.length) * (Math.PI / 180);
+                const offsetX = radius * Math.cos(angle);
+                const offsetY = radius * Math.sin(angle);
                 return player.element.animate({
-                    left: coordinates[pos].x + offset + 'px',
-                    top: coordinates[pos].y  + offset + 'px'
+                    left: coordinates[pos].x + offsetX + 'px',
+                    top: coordinates[pos].y  + offsetY + 'px'
                 }, 500).promise();
             }
             promise = promise.then(move);
